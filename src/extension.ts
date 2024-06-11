@@ -1,4 +1,4 @@
-import { ExtensionContext, workspace, ConfigurationTarget } from "vscode";
+import { ConfigurationTarget, ExtensionContext, Terminal, Uri, commands, window, workspace } from "vscode";
 
 import {
   Executable,
@@ -34,7 +34,24 @@ function addPynkHeart() {
   );
 }
 
-export function activate(_: ExtensionContext) {
+let terminal: Terminal;
+
+export function activate(context: ExtensionContext) {
+  const cmd = 'fysh.execInTerminal';
+  const commandHandler = (file: Uri) => {
+    console.log(file)
+    if (!terminal) {
+      terminal = window.createTerminal({
+        name: 'Fysh',
+      })
+    }
+    terminal.show();
+    // TODO: Make this work on Windows?
+    terminal.sendText(`go-fysh "${file.path}"`)
+  };
+  context.subscriptions.push(commands.registerCommand(cmd, commandHandler));
+  console.log(context)
+
   addPynkHeart();
 
   // If the extension is launched in debug mode then the debug server options are used

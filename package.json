@@ -1,5 +1,5 @@
 {
-  "name": "vscode-fysh",
+  "name": "fysh",
   "displayName": "Fysh",
   "preview": true,
   "description": "VSCode Language Support for Fysh",
@@ -27,8 +27,48 @@
     "vscode": "^1.75.0"
   },
   "activationEvents": [],
-  "main": "./out/main",
+  "main": "./out/extension",
   "contributes": {
+    "commands": [
+      {
+        "category": "Fysh",
+        "command": "fysh.execInTerminal",
+        "icon": "$(play)",
+        "title": "Run Fysh File in Terminal"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "fysh.run",
+          "group": "Fysh",
+          "when": "editorLangId == fysh"
+        }
+      ],
+      "fysh.run": [
+        {
+          "command": "fysh.execInTerminal",
+          "group": "Fysh",
+          "icon": "$(play)",
+          "when": "editorLangId == fysh"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "fysh.execInTerminal",
+          "group": "navigation@0",
+          "title": "Run Fysh in Terminal",
+          "when": "resourceLangId == fysh && !isInDiffEditor && !virtualWorkspace && shellExecutionSupported"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "fysh.run",
+        "label": "Run Fysh",
+        "icon": "$(play)"
+      }
+    ],
     "languages": [
       {
         "id": "fysh",
@@ -50,12 +90,17 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
     "watch": "tsc -b -w",
     "lint": "eslint ./src --ext .ts,.tsx",
     "package": "pnpm vsce package --no-dependencies",
     "publish": "pnpm vsce publish --no-dependencies"
   },
+  "enabledApiProposals": [
+    "terminalDataWriteEvent",
+    "terminalExecuteCommandEvent",
+    "terminalShellIntegration"
+  ],
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
